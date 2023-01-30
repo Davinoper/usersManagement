@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -30,13 +31,13 @@ public class UserApis {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/disable")
     public ResponseEntity<User> disable(@PathVariable Long id){
         User user = userService.disable(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/enable")
     public ResponseEntity<User> enable(@PathVariable Long id){
         User user = userService.enable(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -64,10 +65,10 @@ public class UserApis {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<User>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageable)
+    @GetMapping("/{active}/filter")
+    public ResponseEntity<Page<User>> findAll(@PathVariable Optional<Boolean> active, @PageableDefault(page = 0, size = 100) Pageable pageable)
     {
-        Page<User> users = userService.findAll(pageable);
+        Page<User> users = userService.findAll(pageable, active);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

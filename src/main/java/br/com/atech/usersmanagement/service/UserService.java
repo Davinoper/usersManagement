@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class UserService {
         isValidEmail(user.getEmail());
         isValidUserName(user.getUserName());
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setActive(true);
         log.info("UserService.create - output [{}]", user);
         return usersRepository.save(user);
     }
@@ -90,9 +93,15 @@ public class UserService {
       return userProfile;
     }
 
-    public Page<User> findAll(Pageable pageable){
+    public Page<User> findAll(Pageable pageable, Optional<Boolean> active){
         log.info("UserService.findAll- input [{}]");
-        Page<User> users = usersRepository.findAll(pageable);
+        Page<User> users;
+        if(active.isPresent()){
+            users = usersRepository.findAllWithFilter(pageable, active.get());
+            log.info("UserService.findAll- output [{}]", users);
+            return users;
+        }
+        users = usersRepository.findAll(pageable);
         log.info("UserService.findAll- output [{}]", users);
         return users;
     }
