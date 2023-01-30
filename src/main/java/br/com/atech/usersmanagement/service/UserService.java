@@ -1,16 +1,20 @@
 package br.com.atech.usersmanagement.service;
 
+import br.com.atech.usersmanagement.domain.dto.ChangeUserPasswordDTO;
 import br.com.atech.usersmanagement.domain.dto.CreateUserDTO;
+import br.com.atech.usersmanagement.domain.dto.UpdateUserDTO;
 import br.com.atech.usersmanagement.domain.model.User;
-import br.com.atech.usersmanagement.infra.entity.UserEntity;
+import br.com.atech.usersmanagement.domain.model.UserProfile;
 import br.com.atech.usersmanagement.infra.repository.UsersRepository;
+import br.com.atech.usersmanagement.service.validator.Validator;
+import br.com.atech.usersmanagement.utils.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -21,53 +25,92 @@ public class UserService {
 
     private final ModelMapper modelMapper;
 
-    public UserEntity create(CreateUserDTO createUserDTO){
+    public User create(CreateUserDTO createUserDTO){
         log.info("UserService.create - input [{}]", createUserDTO);
-         User user = modelMapper.map(createUserDTO, User.class);
-         if(user.validPassword()){
-             log.info("UserService.create - output [{}]", createUserDTO);
-            return usersRepository.save(UserEntity.create(user));
-         } else{
-             throw new RuntimeException("A senha do usuário não é valida");
-         }
-    }
-
-    public UserEntity update(CreateUserDTO createUserDTO){
-        log.info("UserService.update - input [{}]", createUserDTO);
         User user = modelMapper.map(createUserDTO, User.class);
-        if(user.validPassword()){
-            log.info("UserService.create - output [{}]", createUserDTO);
-            return usersRepository.save(UserEntity.create(user));
-        } else{
-            throw new RuntimeException("A senha do usuário não é valida");
-        }
+        Validator.validateUserCreation(user);
+        isValidEmail(user.getEmail());
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        log.info("UserService.create - output [{}]", user);
+        return usersRepository.save(user);
     }
 
-    public UserEntity delete(Long id){
+    public User update(UpdateUserDTO updateUserDTO){
+        log.info("UserService.update - input [{}]", updateUserDTO);
+        User user = findById(updateUserDTO.getId());
+        if(user != null){
+            User userModel = modelMapper.map(updateUserDTO, User.class);
+            userModel.setPassword(user.getPassword());
+            userModel.setEmail(user.getEmail());
+            return usersRepository.save(userModel);
+        }
+        return null;
+    }
+
+    public User disable(Long id){
         log.info("UserService.delete- input [{}]", id);
-        UserEntity user = findById(id);
+        User user = findById(id);
         if(user != null){
             user.setActive(false);
             log.info("UserService.delete- input [{}]", user);
             return usersRepository.save(user);
-        }else{
-            throw new RuntimeException("O usuário com o id " + id +" não existe");
         }
-
+        return null;
     }
 
-    public List<UserEntity> findAll(){
+    public User enable(Long id){
+        log.info("UserService.delete- input [{}]", id);
+        User user = findById(id);
+        if(user != null){
+            user.setActive(true);
+            log.info("UserService.delete- input [{}]", user);
+            return usersRepository.save(user);
+        }
+        return null;
+    }
+
+    public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){
+        log.info("UserService.changeUserPassword - input [{}]", changeUserPasswordDTO);
+        User user = findById(id);
+        PasswordUtils.compareEncryptedPassword(
+            changeUserPasswordDTO.getOldPassword(),
+            user.getPassword()
+        );
+        boolean newPasswordValidationSentence = changeUserPasswordDTO.getNewPassword()
+            .equals(changeUserPasswordDTO.getConfirmNewPassword());
+
+        if(newPasswordValidationSentence){
+            user.setPassword(new BCryptPasswordEncoder().encode(changeUserPasswordDTO.getNewPassword()));
+            return usersRepository.save(user);
+        }
+        return null;
+    }
+
+    public UserProfile findUserProfile(String email){
+      User user = usersRepository.findByEmail(email);
+      UserProfile userProfile = modelMapper.map(user, UserProfile.class);
+      return userProfile;
+    }
+
+    public Page<User> findAll(Pageable pageable){
         log.info("UserService.findAll- input [{}]");
-        List<UserEntity> users = usersRepository.findAll();
+        Page<User> users = usersRepository.findAll(pageable);
         log.info("UserService.findAll- output [{}]", users);
         return users;
     }
 
 
-    public UserEntity findById(Long id){
+    public User findById(Long id){
         log.info("UserService.findById- input [{}]", id);
-        UserEntity user = usersRepository.findById(id).orElseThrow();
-        log.info("UserService.findById- input [{}]", user;
+        User user = usersRepository.findById(id).orElseThrow();
+        log.info("UserService.findById- input [{}]", user);
         return user;
+    }
+
+    public void isValidEmail(String email){
+        User user = usersRepository.findByEmail(email);
+        if(user != null){
+            throw new RuntimeException();
+        }
     }
 }
