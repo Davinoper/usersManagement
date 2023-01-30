@@ -30,6 +30,7 @@ public class UserService {
         User user = modelMapper.map(createUserDTO, User.class);
         Validator.validateUserCreation(user);
         isValidEmail(user.getEmail());
+        isValidUserName(user.getUserName());
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         log.info("UserService.create - output [{}]", user);
         return usersRepository.save(user);
@@ -84,7 +85,7 @@ public class UserService {
     }
 
     public UserProfile findUserProfile(String email){
-      User user = usersRepository.findByEmail(email);
+      User user = usersRepository.findByEmailNameOrUserName(email);
       UserProfile userProfile = modelMapper.map(user, UserProfile.class);
       return userProfile;
     }
@@ -105,9 +106,16 @@ public class UserService {
     }
 
     public void isValidEmail(String email){
-        User user = usersRepository.findByEmail(email);
-        if(user != null){
+        User user = usersRepository.findByEmailNameOrUserName(email);
+        if(user == null){
             throw new RuntimeException();
+        }
+    }
+
+    public void isValidUserName(String userName){
+        User user = usersRepository.findByEmailNameOrUserName(userName);
+        if(user == null){
+            throw  new RuntimeException();
         }
     }
 }
