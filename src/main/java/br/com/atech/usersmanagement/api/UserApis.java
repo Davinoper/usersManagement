@@ -38,7 +38,7 @@ public class UserApis {
 
     @PatchMapping("/{id}")
     public ResponseEntity<User> enable(@PathVariable Long id){
-        User user = userService.disable(id);
+        User user = userService.enable(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -56,7 +56,7 @@ public class UserApis {
         User user = userService.changeUserPassword(id,changeUserPasswordDTO);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-    
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){

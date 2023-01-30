@@ -40,8 +40,10 @@ public class UserService {
         User user = findById(updateUserDTO.getId());
         if(user != null){
             User userModel = modelMapper.map(updateUserDTO, User.class);
+            Validator.validateUserUpdate(userModel);
             userModel.setPassword(user.getPassword());
             userModel.setEmail(user.getEmail());
+            log.info("UserService.update - output [{}]", userModel);
             return usersRepository.save(userModel);
         }
         return null;
@@ -72,18 +74,13 @@ public class UserService {
     public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){
         log.info("UserService.changeUserPassword - input [{}]", changeUserPasswordDTO);
         User user = findById(id);
-        PasswordUtils.compareEncryptedPassword(
-            changeUserPasswordDTO.getOldPassword(),
+        Validator.validateUserPasswordChange(
+            changeUserPasswordDTO,
             user.getPassword()
         );
-        boolean newPasswordValidationSentence = changeUserPasswordDTO.getNewPassword()
-            .equals(changeUserPasswordDTO.getConfirmNewPassword());
-
-        if(newPasswordValidationSentence){
-            user.setPassword(new BCryptPasswordEncoder().encode(changeUserPasswordDTO.getNewPassword()));
-            return usersRepository.save(user);
-        }
-        return null;
+        user.setPassword(new BCryptPasswordEncoder().encode(changeUserPasswordDTO.getNewPassword()));
+        log.info("UserService.changeUserPassword - output [{}]", user);
+        return usersRepository.save(user);
     }
 
     public UserProfile findUserProfile(String email){
