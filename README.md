@@ -13,7 +13,7 @@ Serão necessárias as seguintes tecnologias:
 
 
 
-##🔨 Build do projeto
+## 🔨 Build do projeto
 
 Para realizar o build do projeto com o Maven, execute o seguinte comando:
 
