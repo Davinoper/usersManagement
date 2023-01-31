@@ -14,13 +14,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 
 @Configuration
 @EnableAuthorizationServer
-@RequiredArgsConstructor
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private static final int ACCESS_TOKEN_VALIDITY_IN_SECONDS = 1800;
-    private static final int REFRESH_TOKEN_VALIDITY_IN_SECONDS = 2400;
+    private static final int ACCESS_TOKEN_VALIDITY_IN_SECONDS = 1000;
+    private static final int REFRESH_TOKEN_VALIDITY_IN_SECONDS = 2000;
 
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {

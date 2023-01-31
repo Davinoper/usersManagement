@@ -13,14 +13,8 @@ public interface UsersRepository extends JpaRepository<User,Long> {
     + "WHERE (u.active) = :active")
     Page<User> findAllWithFilter(Pageable pageable, boolean active);
 
-    @Query(value ="SELECT u FROM User u "
-    + "WHERE (u.email) = :email"
-    )
     User findByEmail(String email);
 
-    @Query(value ="SELECT u FROM User u "
-            + "WHERE (u.userName) = :userName"
-    )
     User findByUserName(String userName);
 
     @Query(value = " SELECT u FROM User u "
