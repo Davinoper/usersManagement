@@ -6,8 +6,7 @@ import br.com.atech.usersmanagement.domain.dto.UpdateUserDTO;
 import br.com.atech.usersmanagement.domain.model.User;
 import br.com.atech.usersmanagement.domain.model.UserProfile;
 import br.com.atech.usersmanagement.infra.repository.UsersRepository;
-import br.com.atech.usersmanagement.service.validator.Validator;
-import br.com.atech.usersmanagement.utils.PasswordUtils;
+import br.com.atech.usersmanagement.service.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -27,12 +26,12 @@ public class UserService {
 
     private final ModelMapper modelMapper;
 
+    private final Validator validator;
+
     public User create(CreateUserDTO createUserDTO){
         log.info("UserService.create - input [{}]", createUserDTO);
         User user = modelMapper.map(createUserDTO, User.class);
-        Validator.validateUserCreation(user);
-        isValidEmail(user.getEmail());
-        isValidUserName(user.getUserName());
+        validator.validateUserCreation(user);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setActive(true);
         log.info("UserService.create - output [{}]", user);
@@ -44,7 +43,7 @@ public class UserService {
         User user = findById(updateUserDTO.getId());
         if(user != null){
             User userModel = modelMapper.map(updateUserDTO, User.class);
-            Validator.validateUserUpdate(userModel);
+            validator.validateUserUpdate(userModel);
             userModel.setPassword(user.getPassword());
             userModel.setEmail(user.getEmail());
             log.info("UserService.update - output [{}]", userModel);
@@ -78,7 +77,7 @@ public class UserService {
     public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){
         log.info("UserService.changeUserPassword - input [{}]", changeUserPasswordDTO);
         User user = findById(id);
-        Validator.validateUserPasswordChange(
+        validator.validateUserPasswordChange(
             changeUserPasswordDTO,
             user.getPassword()
         );
@@ -112,19 +111,5 @@ public class UserService {
         User user = usersRepository.findById(id).orElseThrow();
         log.info("UserService.findById- input [{}]", user);
         return user;
-    }
-
-    public void isValidEmail(String email){
-        User user = usersRepository.findByEmailNameOrUserName(email);
-        if(user == null){
-            throw new RuntimeException();
-        }
-    }
-
-    public void isValidUserName(String userName){
-        User user = usersRepository.findByEmailNameOrUserName(userName);
-        if(user == null){
-            throw  new RuntimeException();
-        }
     }
 }
