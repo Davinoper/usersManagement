@@ -98,8 +98,11 @@ public class UserService {
         Page<User> users;
         if(active.isPresent()){
             users = usersRepository.findAllWithFilter(pageable, active.get());
+            Page<User> usersWithHidePassword = users.map(user -> {
+                return PasswordUtils.hideUserPassword(user);
+            });
             log.info("UserService.findAll- output [{}]", users);
-            return users;
+            return usersWithHidePassword;
         }
         users = usersRepository.findAll(pageable);
         log.info("UserService.findAll- output [{}]", users);
