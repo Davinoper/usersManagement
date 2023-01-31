@@ -93,4 +93,12 @@ public class Validator {
             throw new DisabledUserException();
         }
     }
+
+    public User findActiveUserByEmail(String email){
+        User user = usersRepository.findByEmail(email);
+        if(!user.isActive()){
+            throw new DisabledUserException();
+        }
+        return user;
+    }
 }

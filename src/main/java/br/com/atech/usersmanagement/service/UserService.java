@@ -8,6 +8,7 @@ import br.com.atech.usersmanagement.domain.model.UserProfile;
 import br.com.atech.usersmanagement.exeception.DisabledUserException;
 import br.com.atech.usersmanagement.infra.repository.UsersRepository;
 import br.com.atech.usersmanagement.service.validation.Validator;
+import br.com.atech.usersmanagement.utils.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,7 +37,7 @@ public class UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setActive(true);
         log.info("UserService.create - output [{}]", user);
-        return usersRepository.save(user);
+        return PasswordUtils.hideUserPassword(usersRepository.save(user));
     }
 
     public User update(UpdateUserDTO updateUserDTO){
@@ -47,7 +48,7 @@ public class UserService {
         user.setName(updateUserDTO.getName());
         validator.validateUserUpdate(user);
         log.info("UserService.update - output [{}]", user);
-        return usersRepository.save(user);
+        return PasswordUtils.hideUserPassword(usersRepository.save(user));
 
     }
 
@@ -57,7 +58,7 @@ public class UserService {
         validator.validateUserExistence(user);
         user.setActive(false);
         log.info("UserService.delete- input [{}]", user);
-        return usersRepository.save(user);
+        return PasswordUtils.hideUserPassword(usersRepository.save(user));
 
     }
 
@@ -67,7 +68,7 @@ public class UserService {
         validator.validateUserExistence(user);
         user.setActive(true);
         log.info("UserService.delete- input [{}]", user);
-        return usersRepository.save(user);
+        return PasswordUtils.hideUserPassword(usersRepository.save(user));
 
     }
 
@@ -80,12 +81,13 @@ public class UserService {
         );
         user.setPassword(new BCryptPasswordEncoder().encode(changeUserPasswordDTO.getNewPassword()));
         log.info("UserService.changeUserPassword - output [{}]", user);
-        return usersRepository.save(user);
+        return PasswordUtils.hideUserPassword(usersRepository.save(user));
     }
 
     public UserProfile findUserProfile(String email){
       log.info("UserService.findProfile - input [{}]", email);
       User user = usersRepository.findByEmail(email);
+      validator.validateUserExistence(user);
       UserProfile userProfile = modelMapper.map(user, UserProfile.class);
       log.info("UserService.findProfile - output [{}]", userProfile);
       return userProfile;
@@ -104,19 +106,10 @@ public class UserService {
         return users;
     }
 
-    public User findById(Long id){
+    public User findById(Long id) {
         log.info("UserService.findById- input [{}]", id);
         User user = usersRepository.findById(id).orElse(null);
         log.info("UserService.findById- input [{}]", user);
-        return user;
-    }
-
-    public User findActiveUserByEmail(String email){
-        log.info("UserService.findActiveUserByEmail - input [{}]", email);
-        User user = usersRepository.findByEmail(email);
-        if(!user.isActive()){
-            throw new DisabledUserException();
-        }
         return user;
     }
 }
