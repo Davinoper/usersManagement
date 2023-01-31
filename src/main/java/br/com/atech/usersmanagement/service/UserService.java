@@ -5,6 +5,7 @@ import br.com.atech.usersmanagement.domain.dto.CreateUserDTO;
 import br.com.atech.usersmanagement.domain.dto.UpdateUserDTO;
 import br.com.atech.usersmanagement.domain.model.User;
 import br.com.atech.usersmanagement.domain.model.UserProfile;
+import br.com.atech.usersmanagement.exeception.DisabledUserException;
 import br.com.atech.usersmanagement.infra.repository.UsersRepository;
 import br.com.atech.usersmanagement.service.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -107,6 +108,15 @@ public class UserService {
         log.info("UserService.findById- input [{}]", id);
         User user = usersRepository.findById(id).orElse(null);
         log.info("UserService.findById- input [{}]", user);
+        return user;
+    }
+
+    public User findActiveUserByEmail(String email){
+        log.info("UserService.findActiveUserByEmail - input [{}]", email);
+        User user = usersRepository.findByEmail(email);
+        if(!user.isActive()){
+            throw new DisabledUserException();
+        }
         return user;
     }
 }
