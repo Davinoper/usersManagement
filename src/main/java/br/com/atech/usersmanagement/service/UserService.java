@@ -53,23 +53,21 @@ public class UserService {
     public User disable(Long id){
         log.info("UserService.delete- input [{}]", id);
         User user = findById(id);
-        if(user != null){
-            user.setActive(false);
-            log.info("UserService.delete- input [{}]", user);
-            return usersRepository.save(user);
-        }
-        return null;
+        validator.validateUserExistence(user);
+        user.setActive(false);
+        log.info("UserService.delete- input [{}]", user);
+        return usersRepository.save(user);
+
     }
 
     public User enable(Long id){
         log.info("UserService.delete- input [{}]", id);
         User user = findById(id);
-        if(user != null){
-            user.setActive(true);
-            log.info("UserService.delete- input [{}]", user);
-            return usersRepository.save(user);
-        }
-        return null;
+        validator.validateUserExistence(user);
+        user.setActive(true);
+        log.info("UserService.delete- input [{}]", user);
+        return usersRepository.save(user);
+
     }
 
     public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){

@@ -25,6 +25,7 @@ public class Validator {
     public void  validateUserUpdate(User user){
         validateName(user);
         validateUserName(user);
+        validateActiveUser(user);
     }
 
     public void validateUserWithoutId(User user){
@@ -72,11 +73,11 @@ public class Validator {
         );
 
         if(!firstValidationSentence){
-            throw new RuntimeException();
+            throw new IncorrectUserPasswordException();
         }
 
         if(!secondValidationSentence){
-            throw new RuntimeException();
+            throw new IncorretConfirmationPasswordException();
         }
     }
 
@@ -84,6 +85,12 @@ public class Validator {
         User userExists = usersRepository.findByEmail(user.getEmail());
         if(userExists != null){
             throw new EmailAlreadyUsedException();
+        }
+    }
+
+    public void validateActiveUser(User user){
+        if(!user.isActive()){
+            throw new DisabledUserException();
         }
     }
 }

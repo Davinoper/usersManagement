@@ -15,5 +15,7 @@ public class ErrorMessage {
 
     public static final String USER_PASSWORD_INCORRECT = "A senha do usuário está incorreta";
 
-    public static final String CONFIRM_PASSWORD_INCORRECT = "A nova senha está diferente da senha de confirmação";
+    public static final String CONFIRMATION_PASSWORD_INCORRECT = "A nova senha está diferente da senha de confirmação";
+
+    public static final String USER_IS_DISABLED = "O usuário está desabilitado";
 }

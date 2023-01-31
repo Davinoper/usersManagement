@@ -41,5 +41,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(new ExceptionDetails(ErrorMessage.USER_DONT_EXISTS, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IncorrectUserPasswordException.class)
+    public ResponseEntity<Object> incorrectUserPasswordException(IncorrectUserPasswordException exception){
+        return new ResponseEntity(new ExceptionDetails(ErrorMessage.USER_PASSWORD_INCORRECT, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IncorretConfirmationPasswordException.class)
+    public ResponseEntity<Object> incorretConfirmationPasswordException(IncorretConfirmationPasswordException exception){
+        return new ResponseEntity(new ExceptionDetails(ErrorMessage.CONFIRMATION_PASSWORD_INCORRECT, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DisabledUserException.class)
+    public ResponseEntity<Object> disabledUserException(DisabledUserException exception){
+        return new ResponseEntity(new ExceptionDetails(ErrorMessage.USER_IS_DISABLED, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+    }
+
 
 }
