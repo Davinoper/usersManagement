@@ -58,6 +58,11 @@ public class UserApis {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @GetMapping("/search/{searchTerm}")
+    public ResponseEntity<Page<User>> findByEmailNameOrUserName( @PathVariable String searchTerm,@PageableDefault(page = 0, size = 100) Pageable pageable){
+        Page<User> users = userService.findByEmailNameOrUserName(pageable, searchTerm);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){

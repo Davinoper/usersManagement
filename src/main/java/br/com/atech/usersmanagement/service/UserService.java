@@ -91,6 +91,13 @@ public class UserService {
       return userProfile;
     }
 
+    public Page<User> findByEmailNameOrUserName(Pageable pageable, String searchTerm){
+        log.info("UserService.findByEmailNameOrUserName - input [{}]", searchTerm);
+        Page<User> users =  usersRepository.findByEmailNameOrUserName(pageable,searchTerm);
+        log.info("UserService.findByEmailNameOrUserName - output [{}]", users);
+        return users;
+    }
+
     public Page<User> findAll(Pageable pageable, Optional<Boolean> active){
         log.info("UserService.findAll- input [{}]");
         Page<User> users;
