@@ -2,6 +2,7 @@ package br.com.atech.usersmanagement.service.validation;
 
 import br.com.atech.usersmanagement.domain.dto.ChangeUserPasswordDTO;
 import br.com.atech.usersmanagement.domain.model.User;
+import br.com.atech.usersmanagement.exeception.*;
 import br.com.atech.usersmanagement.infra.repository.UsersRepository;
 import br.com.atech.usersmanagement.utils.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +14,12 @@ public class Validator {
     private final UsersRepository usersRepository;
 
     public void validateUserCreation(User user){
+        validateEmail(user);
         validateUserWithoutId(user);
         validateUserName(user);
         validateUserPassword(user);
         validateName(user);
-        validateEmail(user);
+
     }
 
     public void  validateUserUpdate(User user){
@@ -31,43 +33,57 @@ public class Validator {
         }
     }
 
-    public void validateUserName(User user){
-        User userExists = usersRepository.findByEmailNameOrUserName(user.getUserName());
+    public void validateUserExistence(User user){
+        if(user == null){
+            throw new UserDontExistsException();
+        }
+    }
 
-        if(user.getUserName().isEmpty() || userExists != null){
-            throw new RuntimeException();
+    public void validateUserName(User user){
+        User userExists = usersRepository.findByUserName(user.getUserName());
+        System.out.println(user.getUserName());
+        if(user.getUserName().isEmpty()){
+            throw new InvalidUserNameException();
+        }
+        if(userExists != null){
+            throw new UserNameAlreadyUsedException();
         }
     }
 
     public void validateName(User user){
         if(user.getName().isEmpty()){
-            throw new RuntimeException();
+            throw new InvalidNameException();
         }
     }
 
     public void validateUserPassword(User user){
         if(user.getPassword().length() < 6){
-            throw new RuntimeException();
+            throw new InvalidPasswordException();
         }
     }
 
     public void validateUserPasswordChange(ChangeUserPasswordDTO changeUserPasswordDTO, String encryptedPassword){
-        boolean validationSentence = PasswordUtils.compareEncryptedPassword(
+        boolean firstValidationSentence = PasswordUtils.compareEncryptedPassword(
             changeUserPasswordDTO.getOldPassword(),
             encryptedPassword
-        ) && changeUserPasswordDTO.getNewPassword().equals(
-            changeUserPasswordDTO.getConfirmNewPassword()
+        );
+        boolean secondValidationSentence = changeUserPasswordDTO.getNewPassword().equals(
+                changeUserPasswordDTO.getConfirmNewPassword()
         );
 
-        if(!validationSentence){
+        if(!firstValidationSentence){
+            throw new RuntimeException();
+        }
+
+        if(!secondValidationSentence){
             throw new RuntimeException();
         }
     }
 
     public void validateEmail(User user){
-        User userExists = usersRepository.findByEmailNameOrUserName(user.getEmail());
-        if(userExists == null){
-            throw new RuntimeException();
+        User userExists = usersRepository.findByEmail(user.getEmail());
+        if(userExists != null){
+            throw new EmailAlreadyUsedException();
         }
     }
 }
