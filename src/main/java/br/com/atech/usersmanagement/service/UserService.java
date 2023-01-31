@@ -87,8 +87,10 @@ public class UserService {
     }
 
     public UserProfile findUserProfile(String email){
+      log.info("UserService.findProfile - input [{}]", email);
       User user = usersRepository.findByEmailNameOrUserName(email);
       UserProfile userProfile = modelMapper.map(user, UserProfile.class);
+      log.info("UserService.findProfile - output [{}]", userProfile);
       return userProfile;
     }
 
@@ -104,7 +106,6 @@ public class UserService {
         log.info("UserService.findAll- output [{}]", users);
         return users;
     }
-
 
     public User findById(Long id){
         log.info("UserService.findById- input [{}]", id);
