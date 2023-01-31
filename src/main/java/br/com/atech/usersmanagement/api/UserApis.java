@@ -72,7 +72,7 @@ public class UserApis {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/profile/{email}")
+    @GetMapping("/{email}/profile")
     public ResponseEntity<UserProfile> findUserProfile(@PathVariable String email){
         UserProfile userProfile = userService.findUserProfile(email);
         return new ResponseEntity<>(userProfile, HttpStatus.OK);
