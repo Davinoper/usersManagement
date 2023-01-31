@@ -41,37 +41,33 @@ public class UserService {
     public User update(UpdateUserDTO updateUserDTO){
         log.info("UserService.update - input [{}]", updateUserDTO);
         User user = findById(updateUserDTO.getId());
-        if(user != null){
-            User userModel = modelMapper.map(updateUserDTO, User.class);
-            validator.validateUserUpdate(userModel);
-            userModel.setPassword(user.getPassword());
-            userModel.setEmail(user.getEmail());
-            log.info("UserService.update - output [{}]", userModel);
-            return usersRepository.save(userModel);
-        }
-        return null;
+        validator.validateUserExistence(user);
+        user.setUserName(updateUserDTO.getUserName());
+        user.setName(updateUserDTO.getName());
+        validator.validateUserUpdate(user);
+        log.info("UserService.update - output [{}]", user);
+        return usersRepository.save(user);
+
     }
 
     public User disable(Long id){
         log.info("UserService.delete- input [{}]", id);
         User user = findById(id);
-        if(user != null){
-            user.setActive(false);
-            log.info("UserService.delete- input [{}]", user);
-            return usersRepository.save(user);
-        }
-        return null;
+        validator.validateUserExistence(user);
+        user.setActive(false);
+        log.info("UserService.delete- input [{}]", user);
+        return usersRepository.save(user);
+
     }
 
     public User enable(Long id){
         log.info("UserService.delete- input [{}]", id);
         User user = findById(id);
-        if(user != null){
-            user.setActive(true);
-            log.info("UserService.delete- input [{}]", user);
-            return usersRepository.save(user);
-        }
-        return null;
+        validator.validateUserExistence(user);
+        user.setActive(true);
+        log.info("UserService.delete- input [{}]", user);
+        return usersRepository.save(user);
+
     }
 
     public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){
@@ -88,7 +84,7 @@ public class UserService {
 
     public UserProfile findUserProfile(String email){
       log.info("UserService.findProfile - input [{}]", email);
-      User user = usersRepository.findByEmailNameOrUserName(email);
+      User user = usersRepository.findByEmail(email);
       UserProfile userProfile = modelMapper.map(user, UserProfile.class);
       log.info("UserService.findProfile - output [{}]", userProfile);
       return userProfile;
@@ -109,7 +105,7 @@ public class UserService {
 
     public User findById(Long id){
         log.info("UserService.findById- input [{}]", id);
-        User user = usersRepository.findById(id).orElseThrow();
+        User user = usersRepository.findById(id).orElse(null);
         log.info("UserService.findById- input [{}]", user);
         return user;
     }
