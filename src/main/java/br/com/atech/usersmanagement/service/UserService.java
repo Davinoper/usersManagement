@@ -42,7 +42,7 @@ public class UserService {
 
     public User update(UpdateUserDTO updateUserDTO){
         log.info("UserService.update - input [{}]", updateUserDTO);
-        User user = findById(updateUserDTO.getId());
+        User user = usersRepository.findById(updateUserDTO.getId()).orElse(null);;
         validator.validateUserExistence(user);
         user.setUserName(updateUserDTO.getUserName());
         user.setName(updateUserDTO.getName());
@@ -54,7 +54,7 @@ public class UserService {
 
     public User disable(Long id){
         log.info("UserService.delete- input [{}]", id);
-        User user = findById(id);
+        User user = usersRepository.findById(id).orElse(null);
         validator.validateUserExistence(user);
         user.setActive(false);
         log.info("UserService.delete- input [{}]", user);
@@ -64,7 +64,7 @@ public class UserService {
 
     public User enable(Long id){
         log.info("UserService.delete- input [{}]", id);
-        User user = findById(id);
+        User user = usersRepository.findById(id).orElse(null);
         validator.validateUserExistence(user);
         user.setActive(true);
         log.info("UserService.delete- input [{}]", user);
@@ -74,7 +74,7 @@ public class UserService {
 
     public User changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO){
         log.info("UserService.changeUserPassword - input [{}]", changeUserPasswordDTO);
-        User user = findById(id);
+        User user = usersRepository.findById(id).orElse(null);
         validator.validateUserPasswordChange(
             changeUserPasswordDTO,
             user.getPassword()
@@ -112,6 +112,7 @@ public class UserService {
     public User findById(Long id) {
         log.info("UserService.findById- input [{}]", id);
         User user = usersRepository.findById(id).orElse(null);
+        validator.validateUserExistence(user);
         log.info("UserService.findById- input [{}]", user);
         return user;
     }

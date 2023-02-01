@@ -89,20 +89,19 @@ public class UserServiceTest {
     };
 
     @Test
-    void findById_throwIfInvalidId(){
+    void findById_shouldCallValidateExistingUser(){
         BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(mockUser));
-        BDDMockito.when(usersRepository.save(ArgumentMatchers.any(User.class))).thenReturn(mockUser);
 
         userService.findById(Mockito.anyLong());
 
         Mockito.verify(validator, Mockito.times(1)).validateUserExistence(captorUser.capture());
-        assertEquals(captorUser.getAllValues().get(0), Optional.ofNullable(mockUser));
+        assertEquals(captorUser.getValue(), mockUser);
 
     };
 
     @Test
     void enable_shoudCallValidateExistingUser(){
-        BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
+        BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(mockUser));
         BDDMockito.when(usersRepository.save(ArgumentMatchers.any(User.class))).thenReturn(mockUser);
 
         userService.enable(Mockito.anyLong());
@@ -113,7 +112,7 @@ public class UserServiceTest {
 
     @Test
     void disable_shouldCallValidateExistingUser(){
-        BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
+        BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(mockUser));
         BDDMockito.when(usersRepository.save(ArgumentMatchers.any(User.class))).thenReturn(mockUser);
 
         userService.disable(Mockito.anyLong());
@@ -135,12 +134,12 @@ public class UserServiceTest {
 
     @Test
     void findUserProfile_shouldCallValidateUserExistence(){
-        BDDMockito.when(usersRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
+        BDDMockito.when(usersRepository.findByEmail(Mockito.anyString())).thenReturn(mockUser);
 
         userService.findUserProfile(Mockito.anyString());
 
         Mockito.verify(validator, Mockito.times(1)).validateUserExistence(captorUser.capture());
-        assertEquals(captorUser.getValue(), Optional.ofNullable(mockUser));
+        assertEquals(captorUser.getValue(), mockUser);
     };
 
 
