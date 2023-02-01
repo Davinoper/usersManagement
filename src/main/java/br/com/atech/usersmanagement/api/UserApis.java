@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,11 @@ public class UserApis {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @GetMapping("/search/{searchTerm}")
+    public ResponseEntity<Page<User>> findByEmailNameOrUserName( @PathVariable String searchTerm,@PageableDefault(page = 0, size = 100) Pageable pageable){
+        Page<User> users = userService.findByEmailNameOrUserName(pageable, searchTerm);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){
@@ -65,14 +71,14 @@ public class UserApis {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/{active}/filter")
-    public ResponseEntity<Page<User>> findAll(@PathVariable Optional<Boolean> active, @PageableDefault(page = 0, size = 100) Pageable pageable)
+    @GetMapping
+    public ResponseEntity<Page<User>> findAll(@RequestParam Optional<Boolean> active, @PageableDefault(page = 0, size = 100) Pageable pageable)
     {
         Page<User> users = userService.findAll(pageable, active);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/profile/{email}")
+    @GetMapping("/{email}/profile")
     public ResponseEntity<UserProfile> findUserProfile(@PathVariable String email){
         UserProfile userProfile = userService.findUserProfile(email);
         return new ResponseEntity<>(userProfile, HttpStatus.OK);
