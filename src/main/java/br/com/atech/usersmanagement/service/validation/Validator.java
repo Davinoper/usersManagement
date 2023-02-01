@@ -15,23 +15,15 @@ public class Validator {
 
     public void validateUserCreation(User user){
         validateEmail(user);
-        validateUserWithoutId(user);
         validateUserName(user);
         validateUserPassword(user);
         validateName(user);
-
     }
 
     public void  validateUserUpdate(User user){
         validateName(user);
         validateUserName(user);
         validateActiveUser(user);
-    }
-
-    public void validateUserWithoutId(User user){
-        if(user.getId() != null){
-            throw new RuntimeException();
-        }
     }
 
     public void validateUserExistence(User user){
@@ -85,6 +77,10 @@ public class Validator {
         User userExists = usersRepository.findByEmail(user.getEmail());
         if(userExists != null){
             throw new EmailAlreadyUsedException();
+        }
+
+        if(user.getEmail().isEmpty()){
+            throw new InvalidUserEmailException();
         }
     }
 

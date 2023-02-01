@@ -18,4 +18,6 @@ public class ErrorMessage {
     public static final String CONFIRMATION_PASSWORD_INCORRECT = "A nova senha está diferente da senha de confirmação";
 
     public static final String USER_IS_DISABLED = "O usuário está desabilitado";
+
+    public static final String INVALID_USER_EMAIL = "O email do usuário é inválido";
 }

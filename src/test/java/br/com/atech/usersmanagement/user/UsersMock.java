@@ -1,6 +1,7 @@
 package br.com.atech.usersmanagement.user;
 
 import br.com.atech.usersmanagement.domain.dto.CreateUserDTO;
+import br.com.atech.usersmanagement.domain.dto.UpdateUserDTO;
 import br.com.atech.usersmanagement.domain.model.User;
 
 public class UsersMock {
@@ -8,19 +9,29 @@ public class UsersMock {
         User user = new User();
         user.setId(1L);
         user.setEmail("user@gmail.com");
-        user.setUserName("mockUser");
+        user.setUserName("mockUserComplete");
+        user.setName("mockComplete");
         user.setPassword("mockuser123456");
         user.setActive(true);
 
         return user;
     }
 
-    public CreateUserDTO getCreateUserDTOWithEmptyEmail() {
+    public static CreateUserDTO getCreateUserDTO() {
         CreateUserDTO createUserDTO = new CreateUserDTO();
-        createUserDTO.setEmail("");
-        createUserDTO.setUserName("mockUser");
-        createUserDTO.setName("mocke");
+        createUserDTO.setEmail("mock@gmail.com");
+        createUserDTO.setUserName("mockUserCreate");
+        createUserDTO.setName("mockCreate");
         createUserDTO.setPassword("1231243");
         return createUserDTO;
+    }
+
+    public static UpdateUserDTO getupdateUserDTO(){
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setId(1L);
+        updateUserDTO.setName("mockUser");
+        updateUserDTO.setUserName("mockUpdate");
+
+        return updateUserDTO;
     }
 }

@@ -56,5 +56,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(new ExceptionDetails(ErrorMessage.USER_IS_DISABLED, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidUserEmailException.class)
+    public ResponseEntity<Object> invalidUserEmailException(InvalidUserEmailException exception){
+        return new ResponseEntity(new ExceptionDetails(ErrorMessage.INVALID_USER_EMAIL, HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+    }
 
 }
