@@ -43,4 +43,5 @@ public class UsersMock {
         changeUserPasswordDTO.setConfirmNewPassword("654321");
         return changeUserPasswordDTO;
     }
+
 }
