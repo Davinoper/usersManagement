@@ -29,7 +29,9 @@ class ValidatorTest {
 
     ChangeUserPasswordDTO changeUserPasswordDTO;
 
-    final String encryptedPassword = "ASDASDwdG#&¨T#*Y#Y(YDUSGDY";
+    final String encryptedPassword = "$2a$10$s1pPAhZkBQivPrGN66fOleveM.FIvEcRPtX4KBo3N4YeXdDFc1fsS";
+
+    final String decryptedPassword = "654321";
 
     @Mock
     BCryptPasswordEncoder encoder;
@@ -133,17 +135,19 @@ class ValidatorTest {
         });
     }
 
-//    @Test
-//    void validateUserPasswordChange_shouldThrowIfConfirmPasswordDontMatch() {
-//        changeUserPasswordDTO.setConfirmNewPassword("wrongPass");
-//        Assertions.assertThrows(IncorretConfirmationPasswordException.class, () ->{
-//            validator.validateUserPasswordChange(changeUserPasswordDTO,encryptedPassword);
-//        });
-//    }
+    @Test
+    void validateUserPasswordChange_shouldThrowIfConfirmPasswordDontMatch() {
+        changeUserPasswordDTO.setConfirmNewPassword("wrongPass");
+        changeUserPasswordDTO.setOldPassword(decryptedPassword);
+        Assertions.assertThrows(IncorretConfirmationPasswordException.class, () ->{
+            validator.validateUserPasswordChange(changeUserPasswordDTO,encryptedPassword);
+        });
+    }
 
     @Test
     void validateUserPasswordChange_shouldThrowIfOldPasswordDontMatch() {
         changeUserPasswordDTO.setOldPassword("wrongPass");
+        changeUserPasswordDTO.setNewPassword(decryptedPassword);
         Assertions.assertThrows(IncorrectUserPasswordException.class, () ->{
             validator.validateUserPasswordChange(changeUserPasswordDTO,encryptedPassword);
         });
