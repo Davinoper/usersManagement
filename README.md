@@ -40,4 +40,6 @@ mvn test
 
 ## 📚 Documentação
 
-A documentação da api está disponível em:
+Para acessar a documentação da api importe as collections do postman:
+- UsersManagement.postman_collection.json
+- usersManagerEnvironment.postman_environment.json
