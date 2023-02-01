@@ -1,5 +1,6 @@
 package br.com.atech.usersmanagement.user;
 
+import br.com.atech.usersmanagement.domain.dto.ChangeUserPasswordDTO;
 import br.com.atech.usersmanagement.domain.dto.CreateUserDTO;
 import br.com.atech.usersmanagement.domain.dto.UpdateUserDTO;
 import br.com.atech.usersmanagement.domain.model.User;
@@ -33,5 +34,13 @@ public class UsersMock {
         updateUserDTO.setUserName("mockUpdate");
 
         return updateUserDTO;
+    }
+
+    public static ChangeUserPasswordDTO getChangePasswordDTO(){
+        ChangeUserPasswordDTO changeUserPasswordDTO = new ChangeUserPasswordDTO();
+        changeUserPasswordDTO.setOldPassword("123456");
+        changeUserPasswordDTO.setNewPassword("654321");
+        changeUserPasswordDTO.setConfirmNewPassword("654321");
+        return changeUserPasswordDTO;
     }
 }

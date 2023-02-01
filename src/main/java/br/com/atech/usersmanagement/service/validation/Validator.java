@@ -34,7 +34,6 @@ public class Validator {
 
     public void validateUserName(User user){
         User userExists = usersRepository.findByUserName(user.getUserName());
-        System.out.println(user.getUserName());
         if(user.getUserName().isEmpty()){
             throw new InvalidUserNameException();
         }
