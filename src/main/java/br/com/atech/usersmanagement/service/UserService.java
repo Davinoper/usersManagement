@@ -53,21 +53,21 @@ public class UserService {
     }
 
     public User disable(Long id){
-        log.info("UserService.delete- input [{}]", id);
+        log.info("UserService.disable- input [{}]", id);
         User user = usersRepository.findById(id).orElse(null);
         validator.validateUserExistence(user);
         user.setActive(false);
-        log.info("UserService.delete- input [{}]", user);
+        log.info("UserService.disable- input [{}]", user);
         return PasswordUtils.hideUserPassword(usersRepository.save(user));
 
     }
 
     public User enable(Long id){
-        log.info("UserService.delete- input [{}]", id);
+        log.info("UserService.enable- input [{}]", id);
         User user = usersRepository.findById(id).orElse(null);
         validator.validateUserExistence(user);
         user.setActive(true);
-        log.info("UserService.delete- input [{}]", user);
+        log.info("UserService.enable- input [{}]", user);
         return PasswordUtils.hideUserPassword(usersRepository.save(user));
 
     }
@@ -121,6 +121,6 @@ public class UserService {
         User user = usersRepository.findById(id).orElse(null);
         validator.validateUserExistence(user);
         log.info("UserService.findById- input [{}]", user);
-        return user;
+        return PasswordUtils.hideUserPassword(user);
     }
 }
